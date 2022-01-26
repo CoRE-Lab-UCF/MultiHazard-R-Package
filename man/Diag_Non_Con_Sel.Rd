@@ -4,8 +4,7 @@
 \alias{Diag_Non_Con_Sel}
 \title{Demonstrate the goodness of fit of the selected non-extreme marginal distribution}
 \usage{
-Diag_Non_Con_Sel(Data, x_lab = "Data", y_lim_min = 0, y_lim_max = 1,
-  Selected)
+Diag_Non_Con_Sel(Data, x_lab = "Data", y_lim_min = 0, y_lim_max = 1, Selected)
 }
 \arguments{
 \item{Data}{Numeric vector containing realizations of the variable of interest.}

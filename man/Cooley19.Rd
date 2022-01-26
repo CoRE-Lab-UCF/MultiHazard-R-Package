@@ -4,10 +4,22 @@
 \alias{Cooley19}
 \title{Derives bivariate isolines using the non-parametric approach of Cooley et al. (2019).}
 \usage{
-Cooley19(Data, Migpd, p.base = 0.01, p.proj = 0.001, u = 0.95,
-  PLOT = FALSE, x_lim_min_T = NA, x_lim_max_T = NA,
-  y_lim_min_T = NA, y_lim_max_T = NA, x_lim_min = NA,
-  x_lim_max = NA, y_lim_min = NA, y_lim_max = NA)
+Cooley19(
+  Data,
+  Migpd,
+  p.base = 0.01,
+  p.proj = 0.001,
+  u = 0.95,
+  PLOT = FALSE,
+  x_lim_min_T = NA,
+  x_lim_max_T = NA,
+  y_lim_min_T = NA,
+  y_lim_max_T = NA,
+  x_lim_min = NA,
+  x_lim_max = NA,
+  y_lim_min = NA,
+  y_lim_max = NA
+)
 }
 \arguments{
 \item{Data}{Data frame consisting of two columns.}

@@ -4,8 +4,15 @@
 \alias{Detrend}
 \title{Detrends a time series.}
 \usage{
-Detrend(Data, Method = "window", Window_Width = 89,
-  End_Length = 1826, PLOT = FALSE, x_lab = "Data", y_lab = "Data")
+Detrend(
+  Data,
+  Method = "window",
+  Window_Width = 89,
+  End_Length = 1826,
+  PLOT = FALSE,
+  x_lab = "Data",
+  y_lab = "Data"
+)
 }
 \arguments{
 \item{Data}{Data frame containing two columns. In column: \itemize{

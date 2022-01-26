@@ -4,8 +4,7 @@
 \alias{Dataframe_Combine}
 \title{Creates a data frame containing up to five time series}
 \usage{
-Dataframe_Combine(data.1, data.2, data.3, data.4 = 0, data.5 = 0,
-  n = 3, names)
+Dataframe_Combine(data.1, data.2, data.3, data.4 = 0, data.5 = 0, n = 3, names)
 }
 \arguments{
 \item{n}{Integer \code{1-5} specifying the number of time series. Default is \code{3}.}

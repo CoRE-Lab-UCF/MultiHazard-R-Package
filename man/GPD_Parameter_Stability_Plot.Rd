@@ -4,8 +4,14 @@
 \alias{GPD_Parameter_Stability_Plot}
 \title{GPD parameter stability plots}
 \usage{
-GPD_Parameter_Stability_Plot(Data, Data_Full, u = 0.95, PLOT = FALSE,
-  xlab_hist = "Data", y_lab = "Data")
+GPD_Parameter_Stability_Plot(
+  Data,
+  Data_Full,
+  u = 0.95,
+  PLOT = FALSE,
+  xlab_hist = "Data",
+  y_lab = "Data"
+)
 }
 \arguments{
 \item{Data}{Numeric vector containing the declusted data.}
