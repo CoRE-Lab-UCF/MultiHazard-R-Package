@@ -11,6 +11,7 @@ GPD_Threshold_Solari_Sel(
   Thres,
   Alpha = 0.1,
   N_Sim = 10^4,
+  RP_Min = 1,
   RP_Max = 1000,
   RP_Plot = 100,
   mu = 365.25,
@@ -31,7 +32,9 @@ GPD_Threshold_Solari_Sel(
 
 \item{Alpha}{Numeric vector of length one specifying the level of confidence associated with the confidence interval i.e., the probability that the interval contains the true value of the parameter is \eqn{1-\frac{Alpha}{2}}. The interval is referred to as the \eqn{100(1-\frac{Alpha}{2})\%} confidence interval. Default is \code{0.1}.}
 
-\item{N_Sim}{Numeric vector of length one specifying the size of the samples used in the bootstrap simulation. Default is \code{10^4}.}
+\item{N_Sim}{Numeric vector of length one specifying the number of bootstrap samples. Default is \code{10^4}.}
+
+\item{RP_Min}{Numeric vector of length one specifying the minimum return level to be calculated. Default is \code{1}.}
 
 \item{RP_Max}{Numeric vector of length one specifying the maximum return level to be calculated. Default is \code{1000}.}
 
@@ -66,6 +69,8 @@ A nonparametric bootstrapping procedure is undertaken to assess the uncertainty 
 Rainfall_Declust_SW<-Decluster_SW(Data=S22.Detrend.df[,c(1:2)],Window_Width=7)
 Finding an appropriate threshold for the declustered series
 S22_OsWL_Solari<-GPD_Threshold_Solari(Event=Rainfall_Declust_SW$Declustered,
-                                  Data=na.omit(S22.Detrend.df[,c(1:2)]))
-
+                                      Data=na.omit(S22.Detrend.df[,2]))
+S22_OsWL_Solari<-GPD_Threshold_Solari_Sel(Event=Rainfall_Declust_SW$Declustered,
+                                          Data=na.omit(S22.Detrend.df[,2]),
+                                          Thres=S22_OsWL_Solari$Candidate_Threshold)
 }
