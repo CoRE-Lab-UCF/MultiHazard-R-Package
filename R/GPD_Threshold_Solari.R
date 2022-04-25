@@ -12,7 +12,7 @@
 #' @param Min_Quantile Numeric vector of length one specifying the minimum threshold, expressed as a quantile of the original time series (2nd column of \code{Data}) to be tested. Default \code{0.95}.
 #' @param Alpha Numeric vector of length one specifying the level of confidence associated with the confidence interval i.e., the probability that the interval contains the true value of the parameter is \eqn{1-\frac{Alpha}{2}}. The interval is referred to as the \eqn{100(1-\frac{Alpha}{2})\%} confidence interval. Default is \code{0.1}.
 #' @param mu (average) occurrence frequency of events in the original time series \code{Data}. Numeric vector of length one. Default is \code{365.25}, daily data.
-#' @param N_Sim Numeric vector of length one specifying the size of the samples used in the bootstrap simulation. Default is \code{10}.
+#' @param N_Sim Numeric vector of length one specifying the number of bootstrap samples. Default is \code{10}.
 #' @section Details:
 #' EDF-statistics are goodness-of-fit statistics based on a comparison of the Empirical Distribution Function (EDF) \eqn{F_n} and a candidate parametric probability distribution \eqn{F} Stephens et al. (1974). Quadratic EDF test measure the distance between \eqn{F} and \eqn{F_n} by:\deqn{n\int^{\infty}_{-\infty}=(F(x)-F_n(x))^2w(x) dx}
 #' where \eqn{n} is the number of elements in the original sample and \eqn{w(x)} is a weighting function.
@@ -52,7 +52,7 @@
 #' Rainfall_Declust_SW<-Decluster_SW(Data=S22.Detrend.df[,c(1:2)],Window_Width=7)
 #' #Finding an appropriate threshold for the declustered series
 #' GPD_Threshold_Solari(Event=Rainfall_Declust_SW$Declustered,
-#'                      Data=22.Detrend.df[,c(1:2)])
+#'                      Data=22.Detrend.df[,2])
 GPD_Threshold_Solari<-function(Event,Data,RPs=c(10,50,100,500,1000),RPs_PLOT=c(2,3,4),Min_Quantile=0.95,Alpha=0.1,mu=365.25,N_Sim=10){
 
   # Loads the p-values matrix
