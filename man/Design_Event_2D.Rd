@@ -21,10 +21,11 @@ Design_Event_2D(
   GPD1 = NA,
   GPD2 = NA,
   mu = 365.25,
-  GPD_Bayes = TRUE,
+  GPD_Bayes = FALSE,
   Decimal_Place = 2,
   RP,
   Interval = 10000,
+  End = F,
   x_lab = "Rainfall (mm)",
   y_lab = "O-sWL (mNGVD 29)",
   x_lim_min = NA,
@@ -71,7 +72,7 @@ Design_Event_2D(
 
 \item{mu}{Numeric vector of length one specifying the (average) occurrence frequency of events in \code{Data}. Default is \code{365.25}, daily data.}
 
-\item{GPD_Bayes}{Logical; indicating whether to use a Bayesian approach to estimate GPD parameters. This involves applying a penalty to the likelihood to aid in the stability of the optimization procedure. Default is \code{TRUE}.}
+\item{GPD_Bayes}{Logical; indicating whether to use a Bayesian approach to estimate GPD parameters. This involves applying a penalty to the likelihood to aid in the stability of the optimization procedure. Default is \code{FALSE}.}
 
 \item{RP}{Numeric vector specifying the return periods of interest.}
 
@@ -98,9 +99,11 @@ Design_Event_2D(
 \item{Plot_Quantile_Isoline}{Logical; indicating whether to first plot the quantile isoline. Default is \code{FALSE}.}
 
 \item{Isoline_Type}{Character vector of length one specifying the type of isoline. For isolines obtained using the overlaying method in Bender et al. (2016) use \code{"Combined"} (default). For quantile isoline from the sample conditioned variable \code{Con1}|(\code{Con2}) on use \code{"Con1"}(\code{"Con2"}).}
+
+\item{Decimal_Palace}{Numeric vector specifying the number of decimal places to which to specifiy the isoline. Defulat is \code{2}.}
 }
 \value{
-Plot of all the observations (grey circles) as well as the declustered excesses above Thres1 (blue circles) or Thres2 (blue circles), observations may belong to both conditional samples. Also shown is the isoline associated with \code{RP} contoured according to their relative probability of occurrence on the basis of the sample from the two joint distributions, the "most likely" design event (black diamond), and design event under the assumption of full dependence (black triangle) are also shown in the plot. The function also returns a list comprising the design events assuming full dependence \code{"FullDependence"}, as well as once the dependence between the variables is accounted for the "Most likley" \code{"MostLikelyEvent"} as well as an \code{"Ensemble"} of possible design events.
+Plot of all the observations (grey circles) as well as the declustered excesses above Thres1 (blue circles) or Thres2 (blue circles), observations may belong to both conditional samples. Also shown is the isoline associated with \code{RP} contoured according to their relative probability of occurrence on the basis of the sample from the two joint distributions, the "most likely" design event (black diamond), and design event under the assumption of full dependence (black triangle) are also shown in the plot. The function also returns a list comprising the design events assuming full dependence \code{"FullDependence"}, as well as once the dependence between the variables is accounted for the "Most likley" \code{"MostLikelyEvent"} as well as an \code{"Ensemble"} of possible design events and relative probabilities of events on the isoline \code{Contour}. The quantile isolines with \code{Quantile_Isoline_1} and \code{Quantile_Isoline_2}, and GPD thresholds with \code{Threshold_1} and \code{Threshold_2}.
 }
 \description{
 Calculates the isoline and relative probability of events on the isoline, given the observational data, for one or more user-specified return periods. Outputs the single "most-likely" design event or an ensemble of possible design events obtained by sampling along the isoline according to these relative probabilities. The design event under the assumption of full dependence is also computed.
@@ -113,20 +116,22 @@ S22.OsWL<-Con_Sampling_2D(Data_Detrend=S22.Detrend.df[,-c(1,4)],
                          Data_Declust=S22.Detrend.Declustered.df[,-c(1,4)],
                          Con_Variable="OsWL",u=0.97)
 S22.Copula.Rainfall<-Copula_Threshold_2D(Data_Detrend=S22.Detrend.df[,-c(1,4)],
-                                        Data_Declust=S22.Detrend.Declustered.df[,-c(1,4)],u =0.97,
+                                        Data_Declust=S22.Detrend.Declustered.df[,-c(1,4)],u1 =0.97,
                                         y_lim_min=-0.075,y_lim_max=0.25,
                                         Upper=c(2,9),Lower=c(2,10),GAP=0.15)$Copula_Family_Var1
 S22.Copula.OsWL<-Copula_Threshold_2D(Data_Detrend=S22.Detrend.df[,-c(1,4)],
-                                    Data_Declust=S22.Detrend.Declustered.df[,-c(1,4)],u =0.97,
+                                    Data_Declust=S22.Detrend.Declustered.df[,-c(1,4)],u2 =0.97,
                                     y_lim_min=-0.075, y_lim_max =0.25,
                                     Upper=c(2,9),Lower=c(2,10),GAP=0.15)$Copula_Family_Var2
-Design_Event_2D(Data=S22.Detrend.df[,-c(1,4)],
-               Data_Con1=S22.Rainfall$Data, Data_Con2=S22.OsWL$Data,
-               u1=0.97, u2=0.97,
-               Copula_Family1=S22.Copula.Rainfall, Copula_Family2=S22.Copula.OsWL,
-               Marginal_Dist1="Logis", Marginal_Dist2="Twe",
-               RP=100,Interval=10000,N=10,N_Ensemble=10,
-               Plot_Quantile_Isoline=FALSE)
+Design.Event<-Design_Event_2D(Data=S22.Detrend.df[,-c(1,4)],
+                             Data_Con1=S22.Rainfall$Data, Data_Con2=S22.OsWL$Data,
+                             u1=0.97, u2=0.97,
+                             Copula_Family1=S22.Copula.Rainfall, Copula_Family2=S22.Copula.OsWL,
+                             Marginal_Dist1="Logis", Marginal_Dist2="Twe",
+                             RP=c(5,100),Interval=10000,N=10^6,N_Ensemble=10,
+                             Plot_Quantile_Isoline=FALSE)
+#Extracting the 100-year isoline from the output
+Design.Event$`100`$Isoline
 }
 \seealso{
 \code{\link{Copula_Threshold_2D}} \code{\link{Diag_Non_Con}} \code{\link{Diag_Non_Con_Trunc}}

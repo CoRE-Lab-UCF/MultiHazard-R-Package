@@ -4,12 +4,14 @@
 \alias{Decluster}
 \title{Declusters a time series}
 \usage{
-Decluster(Data, u = 0.95, SepCrit = 3, mu = 365.25)
+Decluster(Data, u = 0.95, Thres = NA, SepCrit = 3, mu = 365.25)
 }
 \arguments{
 \item{Data}{Numeric vector of the time series.}
 
 \item{u}{Numeric vector of length one specifying the declustering threshold; as a quantile \code{[0,1]} of \code{Data} vector. Default is \code{0.95}.}
+
+\item{Thres}{Threshold expressed on the original scale of the observations. Only one of \code{u} and \code{Thres} should be supplied. Default is \code{NA}.}
 
 \item{SepCrit}{Integer; specifying the separation criterion under which events are declustered. Default is \code{3} corresponding to a storm window of three days in the case of daily data.}
 
