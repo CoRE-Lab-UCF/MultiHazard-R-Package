@@ -660,7 +660,9 @@ Design_Event_2D<-function(Data, Data_Con1, Data_Con2, u1, u2, Thres1=NA, Thres2=
       v.y<-approx(x=cumsum(d),y=prediction.points.ALL.2,xout=seq(0,sum(d),length.out=Interval))$y*(max(prediction.points.ALL[z,2])-min(prediction.points.ALL[z,2]))+min(prediction.points.ALL[z,2])
       ##plot(prediction.points.ALL.1,cumsum(d))
       Iso<-data.frame(v.x,v.y)
-      Iso<-Iso[-which(Iso[,con1]<Thres1),]
+      if(length(which(Iso[,con1]<Thres1))>0){
+        Iso<-Iso[-which(Iso[,con1]<Thres1),]
+      }
       colnames(Iso)<-c(names(Data)[1],names(Data)[2])
       
       #Put the points composing the isoline into a data frame to form part of the function's output.
@@ -784,7 +786,9 @@ Design_Event_2D<-function(Data, Data_Con1, Data_Con2, u1, u2, Thres1=NA, Thres2=
       v.y<-approx(x=cumsum(d),y=prediction.points.ALL.2,xout=seq(0,sum(d),length.out=Interval))$y*(max(prediction.points.ALL[z,2])-min(prediction.points.ALL[z,2]))+min(prediction.points.ALL[z,2])
       ##plot(prediction.points.ALL.1,cumsum(d))
       Iso<-data.frame(v.x,v.y)
-      Iso<-Iso[-which(Iso[,con2]<Thres2),]
+      if(length(which(Iso[,con2]<Thres2))>0){
+       Iso<-Iso[-which(Iso[,con2]<Thres2),]
+      }
       colnames(Iso)<-c(names(Data)[1],names(Data)[2])
       
       #Put the points composing the isoline into a data frame to form part of the function's output.
