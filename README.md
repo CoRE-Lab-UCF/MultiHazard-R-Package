@@ -14,7 +14,7 @@ Tools are provided for selecting the best fitting amongst an array of (non-extre
 Install the latest version of this package by entering the following in R:
 ```r
 install.packages("remotes")
-remotes::install_github("rjaneUCF/MultiHazard-R-Package")
+remotes::install_github("rjaneUCF/MultiHazard")
 ```
 
 
