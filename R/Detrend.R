@@ -36,7 +36,7 @@ if(Method=="linear"){
   x<-seq(1,length(Data[,1]),1)
   model <- lm(Data[,2] ~ x)
   residuals <-  Data[,2] - predict(model, data.frame(x))
- data_Detrend <- residuals + mean(Data[(length(Data[,2])-(End_Length+1)):(length(Data[,2])),2])
+ data_Detrend <- residuals + mean(Data[(length(Data[,2])-(End_Length+1)):(length(Data[,2])),2],na.rm=T)
 }
 
 
