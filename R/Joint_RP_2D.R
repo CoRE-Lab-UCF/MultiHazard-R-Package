@@ -1,7 +1,7 @@
-#' Calculates joint and conditional return periods
+#' Calculates joint return periods
 #'
-#' Univariate return period events are obtained from the GPDs to be consistent with the isolines produced by the \code{Design_Event_2D} function.
-#' To find the conditional probabilities a large number of realizations are simulated from the copulas fit to the conditioned samples, in proportion with the sizes of the conditional samples. The realizations are transformed to the original scale and the relevant probabilities estimated empirically.
+#' Calculates joint return periods via simulation. A large number of realizations are simulated from the copulas fit to the conditioned samples, in proportion with the sizes of the conditional samples.
+#' The realizations are transformed to the original scale and the relevant probabilities estimated empirically.
 #'
 #' @param Data Data frame of dimension \code{nx2} containing two co-occurring time series of length \code{n}.
 #' @param Data_Con1 Data frame containing the conditional sample (declustered excesses paired with concurrent values of other variable), conditioned on the variable in the first column.
@@ -17,9 +17,8 @@
 #' @param Con1 Character vector of length one specifying the name of variable in the first column of \code{Data}.
 #' @param Con2 Character vector of length one specifying the name of variable in the second column of \code{Data}.
 #' @param mu Numeric vector of length one specifying the (average) occurrence frequency of events in \code{Data}. Default is \code{365.25}, daily data.
-#' @param Con_Var Character vector of length one specifying the (column) name of the conditioning variable.
-#' @param RP_Con Numeric vector of length one specifying the return period of the conditioning variable \code{Con_Var}.
-#' @param RP_Non_Con Numeric vector of length one specifying the return period of the non-conditioning variable.
+#' @param Val1 Numeric vector specifying the values of the variable in the first column of \code{Data}.
+#' @param Val2 Numeric vector specifying the values of the variable in the second column of \code{Data}.
 #' @param x_lab Character vector specifying the x-axis label.
 #' @param y_lab Character vector specifying the y-axis label.
 #' @param x_lim_min Numeric vector of length one specifying x-axis minimum. Default is \code{NA}.
@@ -28,65 +27,31 @@
 #' @param y_lim_max Numeric vector of length one specifying y-axis maximum. Default is \code{NA}.
 #' @param DecP Numeric vector of length one specifying the number of decimal places to round the data in the conditional samples to in order to identify observations in both conditional samples. Default is \code{2}.
 #' @param N Numeric vector of length one specifying the size of the sample from the fitted joint distributions used to estimate the density along an isoline. Samples are collected from the two joint distribution with proportions consistent with the total number of extreme events conditioned on each variable. Default is \code{10^6}
-#' @return Console output: \itemize{
-#' \item Con_Var
-#' Name of the conditioning variable
-#' \item RP_Var1
-#' Return period of variable Con1 i.e., variable in second column of \code{Data}
-#' \item RP_Var2
-#' Return period of variable Con2 i.e., variable in third column of \code{Data}
-#' \item Var1
-#' Value of Con1 at the return period of interest i.e. RP_Var1
-#' \item Var2
-#' Value of Con2 at the return period of interest i.e. RP_Var2
-#' \item RP_Full_Dependence
-#' Joint return period of the (Var1,Var2) event under full dependence
-#' \item RP_Independence
-#' Joint return period of the (Var1,Var2) event under independence
-#' \item RP_Copula
-#' Joint return period of the (Var1,Var2) event according to the two sided conditional sampling - copula theory approach
-#' \item Prob
-#' Probability associated with \code{RP_Copula}
-#' \item N_Excess
-#' Number of realizations of the \code{Con_Var} above \code{RP_Con}-year return period value
-#' \item Non_Con_Var_X
-#' Values of the non-conditioned variable of the (conditional) Cummulative Distribution Function (CDF) i.e. x-axis of bottom left plot
-#' \item Con_Prob
-#' \code{Con_Prob} CDF of the non-conditioned variable given the return period of \code{Con_Var} exceeds \code{RP_Con}
-#' \item Con_Prob_Est
-#' Probability the non-conditioned variable is less than or equal to \code{RP_Non_Con} given the return period of \code{Con_Var} exceeds \code{RP_Con}
-#' }
-#' Graphical output: \itemize{
-#' \item Top left: Sample conditioned on Con1 (red crosses) and Con2 (blue circles). Black dot is the event with a marginal return period of the conditioned variable \code{Var_Con} and non-conditioned variable equal to \code{RP_Con} and \code{RP_Non_Con}, respectively. The joint return period of the event using the conditional sampling - copula theory approach and under the assumptions of full dependence and independence between the variables are printed.
-#' \item Top right: Sample conditioned on Con1 (red crosses) and Con2 (blue circles). Only the region where Con_Var exceeds RP_Con is visible. This is the region for which the conditional distribution (of the non-conditioned variable given Con_Var exceeds RP_Con) and in turn conditional return periods are calculated.
-#' \item Bottom left: Conditional Cumulative Distribution Function (CDF) of the non-conditioned variable given the marginal return period of the conditioned variable \code{Var_Con} exceeds \code{RP_Con} years i.e. the points visible in the top right plot.
-#' \item Bottom right: Conditional return period of the non-conditioned variable given the conditioned variable \code{Var_Con} has a return period longer than \code{RP_Con}.
-#' }
+#' @return Console output is a vector \code{RP_Copula} of the joint return period of the specified (Var1,Var2) events according to the conditional sampling - copula theory approach.
 #' @seealso \code{\link{Design_Event_2D}}
 #' @export
 #' @examples
-#' #Under a 10yr (or greater) rainfall event condition, what is the joint probability that a 10yr
-#' #O-sWLevent occurs simultaneously?  What is the cumulative probability of events with the
-#' #frequency equal to or less than a 10yr O-sWL event?
-#' Conditional_RP_2D(Data=S22.Detrend.df,
-#'                   Data_Con1=con.sample.Rainfall$Data, Data_Con2=con.sample.OsWL$Data,
-#'                   u1=0.98, u2=0.98,
-#'                   Copula_Family1=cop.Rainfall,Copula_Family2=cop.OsWL,
-#'                   Marginal_Dist1="Logis", Marginal_Dist2="BS",
-#'                   Con1 = "Rainfall", Con2 = "OsWL",
-#'                   mu = 365.25,
-#'                   Con_Var="Rainfall",
-#'                   RP_Con=10, RP_Non_Con=10,
-#'                   x_lab = "Rainfall (Inches)", y_lab = "O-sWL (ft NGVD 29)",
-#'                   y_lim_max = 10,
-#'                   N=10^7)
-Conditional_RP_2D<-function (Data, Data_Con1, Data_Con2, u1, u2,
-                             Thres1=NA, Thres2=NA, Copula_Family1,
-                             Copula_Family2, Marginal_Dist1, Marginal_Dist2, Con1 = "Rainfall",
-                             Con2 = "OsWL", mu = 365.25, Con_Var, RP_Con, RP_Non_Con,
-                             Var1=NA,Var2=NA,
-                             x_lab = "Rainfall (mm)", y_lab = "O-sWL (mNGVD 29)", x_lim_min = NA,
-                             x_lim_max = NA, y_lim_min = NA, y_lim_max = NA, DecP = 2, N)
+#' #Joint excedence probability of a 5 inch rainfall and 2 ft O-sWL at S-22.
+#' Joint_RP_2D(Data=S22.Detrend.df,
+#'             Data_Con1=con.sample.Rainfall$Data, Data_Con2=con.sample.OsWL$Data,
+#'             u1=0.98, u2=0.98,
+#'             Copula_Family1=cop.Rainfall,Copula_Family2=cop.OsWL,
+#'             Marginal_Dist1="Logis", Marginal_Dist2="BS",
+#'             Con1 = "Rainfall", Con2 = "OsWL",
+#'             mu = 365.25,
+#'             Con_Var="Rainfall",
+#'             RP_Con=10, RP_Non_Con=10,
+#'             x_lab = "Rainfall (Inches)", y_lab = "O-sWL (ft NGVD 29)",
+#'             y_lim_max = 10,
+#'             N=10^7)
+Joint_RP_2D<-function (Data, Data_Con1, Data_Con2, u1, u2,
+                       Thres1=NA, Thres2=NA,
+                       Copula_Family1, Copula_Family2,
+                       Marginal_Dist1, Marginal_Dist2,
+                       Con1 = "Rainfall", Con2 = "OsWL", mu = 365.25,
+                       Var1=NA,Var2=NA,
+                       x_lab = "Rainfall (mm)", y_lab = "O-sWL (mNGVD 29)", x_lim_min = NA,
+                       x_lim_max = NA, y_lim_min = NA, y_lim_max = NA, DecP = 2, N)
 {
   ###Preliminaries
 
@@ -539,114 +504,13 @@ Conditional_RP_2D<-function (Data, Data_Con1, Data_Con2, u1, u2,
 
   Data_Con_Combined <- rbind(round(Data_Con1,DecP),round(Data_Con2,DecP))
   Data_Con_N <- nrow(unique(Data_Con_Combined))
-  RP_Copula <- (1 / (Data_Con_N / time.period)) / (length(which(cop.sample[, con1] > Var1 & cop.sample[, con2] > Var2))/ N)
 
-  #Plotting the results so far
-  par(mfrow = c(2, 2))
-  par(mar = c(4.5, 4.2, 0.5, 0.5))
-  plot(Data[, con1], Data[, con2], xlim = c(x_min, x_max),
-       ylim = c(y_min, y_max), col = "Light Grey", xlab = x_lab,
-       ylab = y_lab, cex.lab = 1.5, cex.axis = 1.5)
-  points(Data_Con1[, con1], Data_Con1[, con2], col = 4, cex = 1.5)
-  points(Data_Con2[, con1], Data_Con2[, con2], col = "Red",
-         pch = 4, cex = 1.5)
-  points(Var1, Var2, pch = 16, cex = 1.5)
-  legend("topright", c(paste("Full dependence RP = ", round(min(RP_Var1,RP_Var2),0), " years", sep = ""), paste("Joint RP (copula) = ", round(RP_Copula,0), " years", sep = ""), paste("Independence RP = ", round(RP_Var1 * RP_Var2,0) , " years", sep = "")), bty = "n", cex = 1.25)
-  segments(Var1,0,Var1,Var2,lty=2)
-  axis(1,Var1,labels=paste(round(Var1,2)),line=1.2)
-  segments(0,Var2,Var1,Var2,lty=2)
-  axis(2,Var2,labels=paste(round(Var2,2)),line=1.2)
-
-  ##Calculating the conditional probabilities using a simulation approach
-  #Rate of observations in the conditional samples. The 'unique' command
-  #ensures observations in both conditional samples are not counted twice.
-  #rate <- nrow(unique(round(rbind(Data_Con1, Data_Con2), 2)))/time.period
-  if (con_var == con1) {
-    #Plotting the region the conditional probabilities correspond to.
-    plot(Data[, con1], Data[, con2], xlim = c(x_min, x_max),
-         ylim = c(y_min, y_max), col = "Light Grey", xlab = x_lab,
-         ylab = y_lab, cex.lab = 1.5, cex.axis = 1.5)
-    points(Data_Con1[, con1], Data_Con1[, con2], col = 4, cex = 1.5)
-    points(Data_Con2[, con1], Data_Con2[, con2], col = "Red",
-           pch = 4, cex = 1.5)
-    axis(1,Var1,labels=paste(round(Var1,2)))
-    rect(0,y_min-1000,Var1,y_max+1000,col=1)
-
-    #Rate
-    rate<-length(which(cop.sample[, con1] > Var1)) / (1 / (Data_Con_N / time.period) * N)
-    #Linear interpolation of the cummulative distribution function (CDF) of con2 given con1 exceeds Var1
-    #x is empirical probabilities, y is values of con2 in simulated sample where con1 exceeds Var1, xout is interpolation points
-    CDF_Var <- approx(x=seq(1, length(which(cop.sample[, con1] > Var1)), 1)/length(which(cop.sample[, con1] > Var1)),
-                      y=cop.sample[which(cop.sample[, con1] > Var1), con2][order(cop.sample[which(cop.sample[,con1] > Var1), con2])],
-                      xout=seq(round(min(1/length(which(cop.sample[,con1] > Var1))) + 5e-04, 3), 1, 0.001))
-    #Plotting CDF_Var the conditional CDF of con2 given con1 exceeds Var1
-    plot(CDF_Var$y, CDF_Var$x, xlab = y_lab, ylab = paste("CDF given",Con_Var,">",round(Var1,2)),
-         xlim = c(y_min, y_max), cex.lab = 1.5, cex.axis = 1.5,
-         type = "l", lwd = 2.5)
-    #Ensuring only interpolated values appoximately lower than the upper limit than the x-axis upper limit are plotted
-    d <- abs(CDF_Var$y - y_max)
-    max <- which(d == min(d, na.rm = T))[1]
-    #Plotting CDF but with probabilities converted to return periods
-    plot(1/(rate * (1 - CDF_Var$x[1:max])), CDF_Var$y[1:max],
-         ylab = y_lab, xlab = paste("RP given",Con_Var,">",round(Var1,2),"(years)"),
-         ylim = c(y_min, y_max), cex.lab = 1.5, cex.axis = 1.5,
-         type = "l", lwd = 2.5)
-    #Number of realizations in the sample where con1 exceeds Var1
-    N_Excess <- length(which(cop.sample[, con1] > Var1))
-    #Interpolating CDF
-    CDF_Var <- approx(CDF_Var$y, CDF_Var$x, seq(round(min(CDF_Var$y),2), round(max(CDF_Var$y), 2), 0.01))
-    #Extracting conditional probability that con2 is less than Var2 given con1 exceeds Var1
-    #By finding value of the last interpolation of the CDF at Var2
-    Con_Prob_Est <- approx(CDF_Var$x, CDF_Var$y, Var2)$y
-  }
-  if (con_var == con2) {
-    #Plotting the region the conditional probabilities correspond to.
-    plot(Data[, con1], Data[, con2], xlim = c(x_min, x_max),
-         ylim = c(y_min, y_max), col = "Light Grey", xlab = x_lab,
-         ylab = y_lab, cex.lab = 1.5, cex.axis = 1.5)
-    points(Data_Con1[, con1], Data_Con1[, con2], col = 4, cex = 1.5)
-    points(Data_Con2[, con1], Data_Con2[, con2], col = "Red",
-           pch = 4, cex = 1.5)
-    axis(2,Var2,labels=paste(round(Var2,2)))
-    rect(x_min-1000,0,x_max+1000,Var2,col=1)
-
-    #Rate
-    rate<-length(which(cop.sample[, con2] > Var2)) / (1 / (Data_Con_N / time.period) * N)
-    #Linear interpolation of the cummulative distribution function (CDF) of con1 given con2 exceeds Var2
-    #x is empirical probabilities, y is values of con1 in simulated sample where con2 exceeds Var2, xout is interpolation points
-    CDF_Var <- approx(x=seq(1, length(which(cop.sample[, con2] > Var2)), 1)/length(which(cop.sample[, con2] > Var2)),
-                      y=cop.sample[which(cop.sample[, con2] > Var2), con1][order(cop.sample[which(cop.sample[,con2] > Var2), con1])],
-                      xout=seq(round(min(1/length(which(cop.sample[,con2] > Var2))) + 5e-04, 3), 1, 0.001))
-    #Plotting CDF_Var the conditional CDF of con1 given con2 exceeds Var2
-    plot(CDF_Var$y, CDF_Var$x, xlab = x_lab, ylab = paste("CDF given",Con_Var,">",round(Var2,2)),
-         xlim = c(x_min, x_max), cex.lab = 1.5, cex.axis = 1.5,
-         type = "l", lwd = 2.5)
-    #Ensuring only interpolated values approximately lower than the upper limit than the x-axis upper limit are plotted
-    d <- abs(CDF_Var$y - x_max)
-    max <- which(d == min(d, na.rm = T))[1]
-    #Plotting CDF but with probabilities converted to return periods
-    plot(1/(rate * (1 - CDF_Var$x[1:max])), CDF_Var$y[1:max],
-         ylab = x_lab, xlab = paste("RP given",Con_Var,">",round(Var2,2),"(years)"),
-         ylim = c(x_min, x_max), cex.lab = 1.5, cex.axis = 1.5,
-         type = "l", lwd = 2.5)
-    #Number of realizations in the sample where con2 exceeds Var2
-    N_Excess <- length(which(cop.sample[, con2] > Var2))
-    #Interpolating CDF
-    print(summary(cop.sample))
-    CDF_Var <- approx(CDF_Var$y, CDF_Var$x, seq(round(min(CDF_Var$y),2), round(max(CDF_Var$y), 2), 0.01))
-    #Extracting conditional probability that con1 is less than Var1 given con2 exceeds Var2
-    #By finding value of the last interpolation of the CDF at Var1
-    Con_Prob_Est <- approx(CDF_Var$x, CDF_Var$y, Var1)$y
+  JRP <- function(x){
+  (1 / (Data_Con_N / time.period)) / (length(which(cop.sample[, con1] > x[1] & cop.sample[, con2] > x[2]))/ N)
   }
 
-  #Create a list of outputs.
-  res <- list(Con_Var = Con_Var, RP_Var1 = RP_Var2, RP_Var2 = RP_Var2,
-              Var1 = Var1, Var2 = Var2, RP_Full_Dependence = min(RP_Var1,RP_Var2),
-              RP_Independence = RP_Var1 * RP_Var2,
-              RP_Copula = RP_Copula,
-              Prob = 1/RP_Copula,
-              N_Excess = N_Excess,Non_Con_Var_X = CDF_Var$x,
-              Con_Prob = CDF_Var$y, Con_RP = 1/(rate * (1 - CDF_Var$y)),
-              Con_Prob_Est = Con_Prob_Est)
-  return(res)
+  y <- data.fame(Var1,Var2)
+  RP_Copula <-apply(y,1,JRP)
+
+  return(RP_Copula)
 }
