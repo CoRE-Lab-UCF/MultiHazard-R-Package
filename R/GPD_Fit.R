@@ -34,33 +34,32 @@ GPD_Fit<-function(Data,Data_Full,u=0.95,Thres=NA,mu=365.25,GPD_Bayes=TRUE,Method
     } else{
       gpd<-evm(Data, th = Thres)
     }
-  gpd$rate<-length(Data[which(Data>=Thres)])/(length(Data_Full))
+    gpd$rate<-length(Data[which(Data>=Thres)])/(length(Data_Full)/mu)
   }
 
   if(Method=="Solari"){
-  Exceedence<-Data[which(Data>=Thres)]
-   if(GPD_Bayes==T){
-     gpd <- evm(Exceedence, th = min(Exceedence), penalty = "gaussian",
-             priorParameters = list(c(0, 0), matrix(c(100^2, 0, 0, 0.25), nrow = 2)))
-   } else{
-     gpd <- evm(Exceedence, th = min(Exceedence))
-   }
-  Thres=min(Exceedence)
-  gpd$rate<-length(Exceedence)/(length(Data_Full))
+    Exceedence<-Data[which(Data>=Thres)]
+    if(GPD_Bayes==T){
+      gpd <- evm(Exceedence, th = min(Exceedence), penalty = "gaussian",
+                 priorParameters = list(c(0, 0), matrix(c(100^2, 0, 0, 0.25), nrow = 2)))
+    } else{
+      gpd <- evm(Exceedence, th = min(Exceedence))
+    }
+    Thres=min(Exceedence)
+    gpd$rate<-length(Exceedence)/(length(Data_Full)/mu)
   }
-  print(gpd)
+
   if(PLOT==TRUE){
-  GPD_diag_HT04(Data=na.omit(Data),
-                Data_Full=Data_Full,
-                model=gpd,
-                param=c(exp(gpd$par[1]), gpd$par[2]),
-                thres=Thres,
-                mu=mu,
-                min.RI=min.RI,
-                xlab.hist=xlab_hist,
-                y.lab=y_lab)
+    GPD_diag_HT04(Data=na.omit(Data),
+                  Data_Full=Data_Full,
+                  model=gpd,
+                  param=c(exp(gpd$par[1]), gpd$par[2]),
+                  thres=Thres,
+                  mu=mu,
+                  min.RI=min.RI,
+                  xlab.hist=xlab_hist,
+                  y.lab=y_lab)
   }
   res<-list("Threshold"=Thres,"Rate"=gpd$rate,"sigma" = exp(gpd$par[1]), "xi" = gpd$par[2],"sigma.SE" = gpd$se[1],"xi.SE" = gpd$se[2])
   return(res)
 }
-
