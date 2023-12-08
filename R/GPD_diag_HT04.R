@@ -1,5 +1,5 @@
 #' @noRd
-GPD_diag_HT04<-function(Data,Data_Full,model,param,thres,mu,min.RI=min.RI,max.RI=100,xlab.hist="Data",y.lab="Return level"){
+GPD_diag_HT04<-function(Data,Data_Full,model,param,thres,min.RI=min.RI,max.RI=100,xlab.hist="Data",y.lab="Return level"){
   xi<-param[2]
   sigma<-param[1]
 
@@ -21,7 +21,6 @@ GPD_diag_HT04<-function(Data,Data_Full,model,param,thres,mu,min.RI=min.RI,max.RI
   lines(seq(thres,max(Data),0.1),density,col=4)
 
   #Return Level
-  Plot.RI.evm(Data,model,mu,min.RI,max.RI,y.lab=y.lab,main.RI="Return Level Plot")
+  Plot.RI.evm(Data,model,min.RI,max.RI,y.lab=y.lab,main.RI="Return Level Plot")
 }
-
 
