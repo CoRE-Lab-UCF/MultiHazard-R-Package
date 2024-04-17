@@ -13,6 +13,10 @@ Tools are provided for selecting the best fitting amongst an array of (non-extre
 ### Applications of the package: 
 >Kim, H., Villarini, G., Jane, R., Wahl, T., Misra, S., and Michalek, A. (2023). On the generation of high‐resolution probabilistic design events capturing the joint occurrence of rainfall and storm surge in coastal basins, Int. J. Climatol, 43(2), 761-771, https://doi.org/10.1002/joc.7825.
 
+>Kim, T., Villarini, G., Kim, H., Jane, R., and Wahl, T. (2023). On the compounding of nitrate loads and discharge, J. Environ. Qual., 52, 706–717. https://doi.org/10.1002/jeq2.20458.
+
+>Peña, F., Obeysekera, J., Jane R., Nardi, F., Maran, C., Cadogan, A., de Groen, F., and Melesse, A. (2023) Investigating compound flooding in a low elevation coastal karst environment using multivariate statistical and 2D hydrodynamic modeling, Weather Clim. Extrem., 39, 100534. https://doi.org/10.1016/j.wace.2022.100534.
+
 ## 1. Installation
 Install the latest version of this package by entering the following in R:
 ```r
