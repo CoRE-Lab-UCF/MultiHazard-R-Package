@@ -1,9 +1,7 @@
 
 # MultiHazard <img src="https://user-images.githubusercontent.com/15319503/195926656-9d3d37b5-86ab-4d4b-9e6d-3c70d5399c73.png" align="right" height="200"/>
 
-The `MultiHazard` package provides tools for stationary multivariate statistical modeling, for example, to estimate the joint distribution of MULTIple co-occurring HAZARDs. The package contains functions for pre-processing data including imputing missing values, detrending and declustering time series (Section 2) as well as analyzing pairwise correlations over a range of lags (Section 3). Functionality is also built in to implement the conditional sampling - copula theory approach in [Jane et al. (2020)](https://doi.org/10.5194/nhess-20-2681-2020) including the automated threshold selection approach in Solari et al. (2017). 
-
-Tools are provided for selecting the best fitting amongst an array of (non-extreme, truncated and non-truncated) parametric marginal distributions, and, copulas to model the dependence structure (Section 3). The package contains a function that calculates joint probability contours using the method of overlaying (conditional) contours given in Bender et al. (2016), and extracts design events such as the "most likely" event or an ensemble of possible design events (Section 4). The package also provides the capability of fitting and simulating synthetic records from three higher dimensional approaches - standard (elliptic/Archimedean) copulas, Pair Copula Constructions (PCCs) and the conditional threshold exceedance approach of Heffernan and Tawn (2004) (Section 5). Finally, a function that calculates the time for a user-specified height of sea level rise to occur under various scenarios is supplied (Section 6).
+The `MultiHazard` package provides tools for stationary multivariate statistical modeling, for example, to estimate the joint distribution of MULTIple co-occurring HAZARDs. The package contains functions for pre-processing data including imputing missing values, detrending and declustering time series (Section 1) as well as analyzing pairwise correlations over a range of lags (Section 2). Functionality is also built in to implement the conditional sampling - copula theory approach in [Jane et al. (2020)](https://doi.org/10.5194/nhess-20-2681-2020) including the automated threshold selection approach in [Solari et al. (2017)](https://doi.org/10.1002/2016WR019426). Tools are provided for selecting the best fitting amongst an array of (non-extreme, truncated and non-truncated) parametric marginal distributions, and, copulas to model the dependence structure (Section 3). The package contains a function that calculates joint probability contours using the method of overlaying (conditional) contours given in [Bender et al. (2016)](https://doi.org/10.1080/02626667.2015.1052816), and extracts design events such as the "most likely" event or an ensemble of possible design events. The package also provides the capability of fitting and simulating synthetic records from three higher dimensional approaches - standard (elliptic/Archimedean) copulas, Pair Copula Constructions (PCCs) and the conditional threshold exceedance approach of [Heffernan and Tawn (2004)](https://doi.org/10.1111/j.1467-9868.2004.02050.x) (Section 4). Finally, a function that calculates the time for a user-specified height of sea level rise to occur under various scenarios is supplied (Section 5).
 
 ### Citation: 
 >Jane, R., Cadavid, L., Obeysekera, J., and Wahl, T. (2020). Multivariate statistical modelling of the drivers of compound flood events in South Florida, Nat. Hazards Earth Syst. Sci., 20, 2681–2699, https://doi.org/10.5194/nhess-20-2681-2020.
@@ -17,7 +15,7 @@ Tools are provided for selecting the best fitting amongst an array of (non-extre
 
 >Peña, F., Obeysekera, J., Jane R., Nardi, F., Maran, C., Cadogan, A., de Groen, F., and Melesse, A. (2023) Investigating compound flooding in a low elevation coastal karst environment using multivariate statistical and 2D hydrodynamic modeling, Weather Clim. Extrem., 39, 100534. https://doi.org/10.1016/j.wace.2022.100534.
 
-## 1. Installation
+## Installation
 Install the latest version of this package by entering the following in R:
 ```r
 install.packages("remotes")
@@ -25,7 +23,7 @@ remotes::install_github("rjaneUCF/MultiHazard")
 ```
 
 
-## 2. Pre-processing
+## 1. Pre-processing
 
 ### Imputation
 
@@ -480,7 +478,7 @@ Solari.Sel<-GPD_Threshold_Solari_Sel(Event=S20.OsWL.Declustered.SW$Declustered,
 
 ![](README_files/figure-markdown_github/unnamed-chunk-29-1.png)
 
-## 3. Correlation analysis
+## 2. Correlation analysis
 
 We can use the `Kendall_Lag` function to view the Kendall's rank correlations coefficient *τ* between the time seres over a range of lags
 
@@ -510,7 +508,7 @@ S20.Kendall.Results$Test$Rainfall_OsWL_Test
     ##  [6] 1.887733e-19 1.987221e-20 2.232548e-07 4.033739e-01 7.669577e-02
     ## [11] 1.186248e-03 6.352872e-05 3.864403e-05
 
-## 4. Bivariate Analysis
+## 3. Bivariate Analysis
 
 In the report the 2D analysis considers the two forcings currently accounted for in structural design assessments undertaken by SFWMD: rainfall and O-sWL. The 2D analysis commences with the well-established two-sided conditional sampling approach, where excesses of a conditioning variable are paired with co-occurring values of another variable to create two samples. For each sample the marginals (one extreme, one non-extreme) and joint distribution are then modeled.
 
@@ -868,7 +866,7 @@ isoline<-Cooley19(Data=na.omit(S20.Detrend.df[,2:3]),Migpd=S20.GPD,
 
 ![](README_files/figure-markdown_github/unnamed-chunk-48-1.png)
 
-## 5. Trivariate analysis
+## 4. Trivariate analysis
 
 In the report three higher dimensional (&gt;3) approaches are implemented to model the joint distribution of rainfall, O-sWL and groundwater level, they are:
 
@@ -1039,7 +1037,7 @@ pairs(S20.Pairs.Plot.Data[,1:3],
 
 <img src="README_files/figure-markdown_github/unnamed-chunk-60-1.png" style="display: block; margin: auto;" />
 
-## 6. Sea Level Rise
+## 5. Sea Level Rise
 
 The SLR\_Scenarios function estimates the time required for a user-specified amount of sea level rise ( `SeaLevelRise`) to occur under various sea level rise scenarios. The default scenarios are for Key West from the Southeast Florida Regional Climate Change Compact (2019). Let's calculate how long before the O-sWL in the 100-year "most-likely" design event (see section 4) equals that of the corresponding design event derived under full dependence.
 
